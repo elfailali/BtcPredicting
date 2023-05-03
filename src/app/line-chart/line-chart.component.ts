@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import axios from 'axios';
 import Chart from 'chart.js/auto';
 
+const API_URL = 'https://api.coingecko.com/api/v3';
 
 @Component({
   selector: 'app-line-chart',
@@ -8,40 +10,72 @@ import Chart from 'chart.js/auto';
   styleUrls: ['./line-chart.component.css']
 })
 export class LineChartComponent {
-
-  chart : any;
-
-  createChart(){
+  chart: any;
   
-    this.chart = new Chart("MyChart", {
-      type: 'line', //this denotes tha type of chart
 
-      data: {// values on X-Axis
-        labels: ['2022-05-10', '2022-05-11', '2022-05-12','2022-05-13',
-								 '2022-05-14', '2022-05-15', '2022-05-16','2022-05-17', ], 
-	      datasets: [
+  async createChart() {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setMonth(endDate.getMonth() - 1);
+
+    console.log("the end;" + endDate)
+
+    const response = await axios.get(`${API_URL}/coins/bitcoin/market_chart`, {
+      params: {
+        vs_currency: 'usd',
+        days: 7,
+        interval: 'hourly'
+      },
+    });
+    // example response =
+    // https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=hourly
+
+
+    const prices = response.data.prices;
+    const timeStamps = prices.map((price: any) => new Date(price[0]));
+
+    // CONVERT timeStamps FROM '' TO 'Apr 26, 2023, 4:01:09 AM'
+    let time_stamp = [];
+    for(var date of timeStamps){
+      time_stamp.push(this.convert_date(date));
+    }
+
+    // DEFINE THE LINE CHART
+    this.chart = new Chart("MyChart", {
+      type: 'line',
+      data: {
+        labels: time_stamp,
+        datasets: [
           {
-            label: "Real Price",
-            data: ['467','576', '572', '79', '92', '574', '573', '576'],
+            label: "Bitcoin Price (USD)",
+            data: prices.map((price: any) => price[1]),
             backgroundColor: 'blue'
-          },
-          {
-            label: "Predict Price",
-            data: ['542', '542', '536', '327', '17',
-									 '0.00', '538', '541'],
-            backgroundColor: 'limegreen'
-          }  
+          }
         ]
       },
       options: {
-        aspectRatio:3
+        aspectRatio: 2
       }
-      
     });
   }
 
   ngOnInit(): void {
     this.createChart();
+  }
+
+  convert_date(date : Date){
+    // take date = "Wed Apr 26 2023 04:01:09 GMT+0200 (heure d’été d’Europe centrale)"
+    // return Output: Apr 26, 2023, 4:01:09 AM
+      const formattedDate = date.toLocaleString("en-US", { 
+      year: 'numeric', 
+      month: 'short', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit',
+      timeZone: 'Europe/Paris'
+    });
+    return formattedDate;
   }
 
 }
