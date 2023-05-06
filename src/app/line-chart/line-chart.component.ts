@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+// axios : Promise based HTTP client for the browser and node.js
 import axios from 'axios';
 import Chart from 'chart.js/auto';
 
