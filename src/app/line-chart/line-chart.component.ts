@@ -24,8 +24,8 @@ export class LineChartComponent {
     const response = await axios.get(`${API_URL}/coins/bitcoin/market_chart`, {
       params: {
         vs_currency: 'usd',
-        days: 7,
-        interval: 'hourly'
+        days: 90,
+        interval: 'daily'
       },
     });
     // example response =
@@ -40,6 +40,7 @@ export class LineChartComponent {
     for(var date of timeStamps){
       time_stamp.push(this.convert_date(date));
     }
+    console.log(time_stamp)
 
     // DEFINE THE LINE CHART
     this.chart = new Chart("MyChart", {
@@ -48,12 +49,21 @@ export class LineChartComponent {
         labels: time_stamp,
         datasets: [
           {
+            // real price plot
             label: "Bitcoin Price (USD)",
             data: prices.map((price: any) => price[1]),
             backgroundColor: 'blue'
+          },
+          {
+            // predictive price plot
+            label: "Predictive Bitcoin Price (USD)",
+            data: prices.map((price: any) => price[1]),
+            backgroundColor: 'red'
           }
-        ]
+        ],
+        
       },
+    
       options: {
         aspectRatio: 2
       }
