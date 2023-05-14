@@ -23,12 +23,15 @@ export class LineChartComponent {
 
     startDate.setMonth(endDate.getMonth() - 1);
 
+
+    // model api  
+
     const input =
     {
-      "day": 12,
+      "day": 15,
       "month": 5,
       "yesterday_price": 27639,
-      "forecast_days": 10
+      "forecast_days": 5
     }
 
 
