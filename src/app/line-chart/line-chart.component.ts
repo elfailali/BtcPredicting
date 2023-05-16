@@ -31,7 +31,7 @@ export class LineChartComponent {
       "day": 15,
       "month": 5,
       "yesterday_price": 27639,
-      "forecast_days": 5
+      "forecast_days": 10
     }
 
 
@@ -43,15 +43,18 @@ export class LineChartComponent {
       },
     });
     await axios.post('http://127.0.0.1:5000/predict', input )
-      .then(response => {
-        const data = response.data;
-        n_dates = data.predictions.map((prediction: { date: string; prediction: number }) => prediction.date);
-        n_predictions = data.predictions.map((prediction: { date: string; prediction: number }) => prediction.prediction);
+    
+      const response_api = await axios.get('http://localhost:5000/get_predict');
+      const data = response_api.data;
+      let i;
+      for(i=0; i<data.length; i++){
+        n_dates[i] = data[i][1];
+        n_predictions[i] = data[i][2];
+
+      }
+
       
-      })
-      .catch(error => {
-        console.error(error.message);
-      });
+      console.log(n_dates)
 
 
 
@@ -72,7 +75,7 @@ export class LineChartComponent {
     
     let  con_data=prices.map((price: any) => price[1])
     con_data=con_data.slice(0,-1)
-    console.log(con_data)
+  
     // DEFINE THE LINE CHART
     this.chart = new Chart("MyChart", {
       type: 'line',
