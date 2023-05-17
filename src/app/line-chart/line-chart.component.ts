@@ -28,10 +28,10 @@ export class LineChartComponent {
 
     const input =
     {
-      "day": 15,
+      "day": 18,
       "month": 5,
       "yesterday_price": 27639,
-      "forecast_days": 10
+      "forecast_days": 5
     }
 
 
